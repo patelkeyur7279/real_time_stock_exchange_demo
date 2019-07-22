@@ -1,9 +1,11 @@
 package com.example.stockexchangeappdemo;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -47,21 +49,30 @@ public class StockDetails extends AppCompatActivity {
         setContentView(R.layout.activity_stock_details);
 
         mData = getIntent().getParcelableExtra("DATA");
+        setTitle(mData.getName());
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         mGraphView = findViewById(R.id.graph_view);
 
-        getStockHistory();
-
     }
 
-    /*@Override
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            finish();
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
         mTimer = new Timer();
         mTimerTask = new TimerTask() {
             @Override
             public void run() {
-                //getStockHistory();
+                getStockHistory();
             }
         };
         mTimer.schedule(mTimerTask, 0, 10000);
@@ -71,7 +82,7 @@ public class StockDetails extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         mTimer.cancel();
-    }*/
+    }
 
     private void getStockHistory(){
 
@@ -84,7 +95,7 @@ public class StockDetails extends AppCompatActivity {
         String toDate = format.format(Calendar.getInstance(TimeZone.getDefault()).getTime());
 
         String historyUrl = "https://api.worldtradingdata.com/api/v1/history?symbol=" + mData.getSymbol()
-                + "&api_token=XXn5pEH5C9TVivZ0Vz75U7iJQAyws3WQLTnzAP1jFRaAd7MA0Fh8uwODlc6o&sort=asc&date_from=" + fromDate + "&date_to=" + toDate;
+                + "&api_token=XXn5pEH5C9TVivZ0Vz75U7iJQAyws3WQLTnzAP1jFRaAd7MA0Fh8uwODlc6o&sort=asc";//&date_from=" + fromDate + "&date_to=" + toDate;
 
         StringRequest request = new StringRequest(historyUrl, new Response.Listener<String>() {
             @Override
@@ -128,16 +139,16 @@ public class StockDetails extends AppCompatActivity {
                         String volume = object.getString("volume");
 
                         series.appendData(new DataPoint(date, Float.parseFloat(close)), true, 52);
-
                         mHistory.add(new ModelStockHistory(array.getString(i),
                                 new ModelHistoryChilds(open, close, high, low, volume)));
 
                     }
 
-                    series.setTitle("High");
                     series.setAnimated(true);
 
-                    mGraphView.getViewport().setScalable(true);
+                    mGraphView.scrollTo(mGraphView.getScrollX(), mGraphView.getScrollY());
+                    mGraphView.getViewport().setScalableY(false);
+                    //mGraphView.getViewport().setScalable(true);
                     mGraphView.getGridLabelRenderer().setLabelFormatter(new DateAsXAxisLabelFormatter(StockDetails.this));
                     mGraphView.addSeries(series);
 
