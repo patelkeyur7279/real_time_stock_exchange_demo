@@ -5,6 +5,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -50,6 +51,7 @@ public class MainActivity extends AppCompatActivity implements IStockListHandler
     @Override
     protected void onResume() {
         super.onResume();
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         mTimer = new Timer();
         mTimerTask = new TimerTask() {
             @Override

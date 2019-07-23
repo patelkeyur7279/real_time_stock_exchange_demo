@@ -3,6 +3,7 @@ package com.example.stockexchangeappdemo;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
@@ -68,6 +69,7 @@ public class StockDetails extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         mTimer = new Timer();
         mTimerTask = new TimerTask() {
             @Override
@@ -146,10 +148,13 @@ public class StockDetails extends AppCompatActivity {
 
                     series.setAnimated(true);
 
+                    DateAsXAxisLabelFormatter dateAsXAxisLabelFormatter = new DateAsXAxisLabelFormatter(StockDetails.this);
+                    dateAsXAxisLabelFormatter.formatLabel(new Date().getTime(), true);
+
                     mGraphView.scrollTo(mGraphView.getScrollX(), mGraphView.getScrollY());
                     mGraphView.getViewport().setScalableY(false);
                     //mGraphView.getViewport().setScalable(true);
-                    mGraphView.getGridLabelRenderer().setLabelFormatter(new DateAsXAxisLabelFormatter(StockDetails.this));
+                    mGraphView.getGridLabelRenderer().setLabelFormatter(dateAsXAxisLabelFormatter);
                     mGraphView.addSeries(series);
 
 
